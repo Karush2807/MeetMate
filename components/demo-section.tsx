@@ -46,7 +46,7 @@ export default function App() {
       </div>
 
       <div>
-        <Accordion type="multiple" defaultValuealue={["usage", "installation"]}>
+        <Accordion type="multiple" defaultValue={["usage", "installation"]}>
           <AccordionItem value="usage">
             <AccordionTrigger>Usage Instructions</AccordionTrigger>
             <AccordionContent>
