@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Send, Calendar, Loader2, Link as LinkIcon } from "lucide-react"
 import { format, addDays, parse, isValid } from "date-fns"
+import Groq from "groq-sdk"
 
 interface Message {
   role: "user" | "assistant"
@@ -36,6 +37,13 @@ export function MeetingScheduler() {
   const [scheduledMeetings, setScheduledMeetings] = useState<MeetingDetails[]>([])
   const [currentMeeting, setCurrentMeeting] = useState<MeetingDetails | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  
+  // Initialize Groq client
+  const groq = new Groq({
+    apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY,
+    // Note: In a browser environment, you might need to use:
+    dangerouslyAllowBrowser: true,
+  })
 
   // --- Google API Initialization ---
   useEffect(() => {
@@ -51,7 +59,7 @@ export function MeetingScheduler() {
                 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
                 'https://www.googleapis.com/discovery/v1/apis/people/v1/rest'
               ],
-              scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/contacts.readonly',
+              scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/contacts.readonly',
             }).then(() => {
               console.log("Google API client initialized!")
             }).catch((error: Error) => {
@@ -78,7 +86,7 @@ export function MeetingScheduler() {
         gapi.load('auth2', () => {
           gapi.auth2.init({
             client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-            scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/contacts.readonly',
+            scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/contacts.readonly',
           }).then(() => {
             console.log("auth2 initialized!")
             resolve()
@@ -91,9 +99,101 @@ export function MeetingScheduler() {
     return authInstance
   }
 
-  // --- NLP: Parse Meeting Request ---
-  const processNaturalLanguage = (text: string): MeetingDetails | null => {
-    console.log("Processing input:", text)
+  // --- Create Google Contact ---
+  const createGoogleContact = async (name: string, email: string): Promise<boolean> => {
+    try {
+      const { gapi } = await import('gapi-script')
+      const authInstance = await getAuthInstance()
+      if (authInstance && !authInstance.isSignedIn.get()) {
+        await authInstance.signIn()
+      }
+      console.log(`Creating Google contact for ${name} with email ${email}...`)
+      
+      const response = await gapi.client.people.people.createContact({
+        resource: {
+          names: [{ givenName: name }],
+          emailAddresses: [{ value: email }]
+        }
+      })
+      
+      console.log("Created Google contact:", response)
+      return true
+    } catch (error) {
+      console.error("Error creating Google contact:", error)
+      return false
+    }
+  }
+
+  // --- NLP: Parse Meeting Request using Groq ---
+  const processNaturalLanguage = async (text: string): Promise<MeetingDetails | null> => {
+    try {
+      console.log("Processing input with Groq:", text)
+      
+      // Use Groq API to parse the meeting request
+      const chatCompletion = await groq.chat.completions.create({
+        messages: [
+          {
+            role: "system",
+            content: "You are an AI assistant that helps parse meeting requests. Extract the meeting details including title, date, time, and participants from the user's message. Respond in JSON format with keys: title, date, time, participants (array)."
+          },
+          {
+            role: "user",
+            content: text
+          }
+        ],
+        model: "llama3-8b-8192",
+        response_format: { type: "json_object" }
+      })
+      
+      const responseContent = chatCompletion.choices[0]?.message?.content || ""
+      console.log("Groq response:", responseContent)
+      
+      try {
+        const parsedResponse = JSON.parse(responseContent)
+        
+        // Fallback to basic parsing if Groq doesn't return expected format
+        if (!parsedResponse.participants || !Array.isArray(parsedResponse.participants)) {
+          return fallbackProcessNaturalLanguage(text)
+        }
+        
+        // Convert date string to Date object
+        let meetingDate = new Date()
+        if (parsedResponse.date) {
+          if (parsedResponse.date.toLowerCase() === "tomorrow") {
+            meetingDate = addDays(new Date(), 1)
+          } else if (parsedResponse.date.toLowerCase() === "today") {
+            meetingDate = new Date()
+          } else {
+            try {
+              meetingDate = new Date(parsedResponse.date)
+              if (isNaN(meetingDate.getTime())) {
+                meetingDate = new Date()
+              }
+            } catch (e) {
+              meetingDate = new Date()
+            }
+          }
+        }
+        
+        return {
+          title: parsedResponse.title || "Meeting",
+          date: meetingDate,
+          time: parsedResponse.time || "9:00 AM",
+          participants: parsedResponse.participants
+        }
+      } catch (e) {
+        console.error("Error parsing Groq response:", e)
+        return fallbackProcessNaturalLanguage(text)
+      }
+    } catch (error) {
+      console.error("Error using Groq API:", error)
+      return fallbackProcessNaturalLanguage(text)
+    }
+  }
+  
+  // Fallback to basic regex parsing if Groq API fails
+  const fallbackProcessNaturalLanguage = (text: string): MeetingDetails | null => {
+    console.log("Using fallback parsing for:", text)
     let meetingDate = new Date()
     if (text.toLowerCase().includes("tomorrow")) {
       meetingDate = addDays(new Date(), 1)
@@ -328,9 +428,12 @@ export function MeetingScheduler() {
         currentMeeting.missingEmailIndex !== -1
       ) {
         const emails = currentMeeting.emails ? [...currentMeeting.emails] : []
-        emails[currentMeeting.missingEmailIndex] = input.trim()
+        const emailInput = input.trim()
+        const missingIndex = currentMeeting.missingEmailIndex
+        const participantName = currentMeeting.participants[missingIndex]
+        
         // Validate email format
-        if (!/\S+@\S+\.\S+/.test(input.trim())) {
+        if (!/\S+@\S+\.\S+/.test(emailInput)) {
           setMessages(prev => [
             ...prev,
             {
@@ -341,6 +444,23 @@ export function MeetingScheduler() {
           setIsLoading(false)
           return
         }
+        
+        // Save the email
+        emails[missingIndex] = emailInput
+        
+        // Create contact in Google Contacts
+        const contactCreated = await createGoogleContact(participantName, emailInput)
+        
+        if (contactCreated) {
+          setMessages(prev => [
+            ...prev,
+            {
+              role: "assistant",
+              content: `I've added ${participantName} (${emailInput}) to your contacts for future meetings.`
+            }
+          ])
+        }
+        
         // Try to create the meeting again with the provided email
         const meetingWithEmail: MeetingDetails = {
           ...currentMeeting,
@@ -374,8 +494,9 @@ export function MeetingScheduler() {
         setIsLoading(false)
         return
       }
+      
       // Normal flow: parse and create meeting
-      const meetingDetails = processNaturalLanguage(input)
+      const meetingDetails = await processNaturalLanguage(input)
       if (meetingDetails) {
         console.log("About to create meeting with details:", meetingDetails)
         const createdMeeting = await createMeeting(meetingDetails)
