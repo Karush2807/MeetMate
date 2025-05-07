@@ -94,7 +94,7 @@ const ParticipantSelector: React.FC<ParticipantSelectorProps> = ({
         params: {
           personFields: 'names,emailAddresses,photos,memberships',
           sortOrder: 'FIRST_NAME_ASCENDING',
-          pageSize: 100
+          pageSize: 1000
         }
       });
       
