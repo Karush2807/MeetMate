@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     siteName: "MeetMate",
     images: [
       {
-        url: "https://i.ibb.co/hRCkcP5J/image.png", 
+        url: "public/images/preview.png", 
         width: 1200,
         height: 630,
         alt: "MeetMate Preview Image",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MeetMate",
     description: "Schedule meetings in plain English with AI-powered automation",
-    images: ["https://i.ibb.co/hRCkcP5J/image.png"], 
+    images: ["public/images/preview.png"], 
     site: "@janautsav", 
   },
 };
