@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Calendar, FileText, CheckSquare, BarChart, Zap } from "lucide-react";
+import { MessageSquare, Calendar, FileText, CheckSquare, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -11,36 +11,25 @@ const features = [
     description:
       "Simply type what you want in plain English. Our AI understands context, preferences, and constraints.",
     icon: Calendar,
-    color: "bg-blue-500/10 text-blue-500",
-    gradient: "from-blue-500 to-indigo-500",
+    color: "bg-primary/10 text-primary",
   },
   {
     title: "Smart Pre-Meeting Briefs",
     description: "Automatically generate meeting briefs with relevant context, previous discussions, and key points.",
     icon: FileText,
-    color: "bg-purple-500/10 text-purple-500",
-    gradient: "from-purple-500 to-pink-500",
+    color: "bg-primary/10 text-primary",
   },
   {
     title: "Automated MoM Generation",
     description: "AI-powered minutes of meeting creation that captures key decisions, action items, and insights.",
     icon: MessageSquare,
-    color: "bg-green-500/10 text-green-500",
-    gradient: "from-green-500 to-emerald-500",
+    color: "bg-primary/10 text-primary",
   },
   {
     title: "Outcome & Task Tracking",
     description: "Track meeting outcomes and automatically assign tasks to team members with deadlines.",
     icon: CheckSquare,
-    color: "bg-amber-500/10 text-amber-500",
-    gradient: "from-amber-500 to-orange-500",
-  },
-  {
-    title: "Analytics Dashboard",
-    description: "Gain insights into meeting productivity, participation, and follow-through on action items.",
-    icon: BarChart,
-    color: "bg-rose-500/10 text-rose-500",
-    gradient: "from-rose-500 to-red-500",
+    color: "bg-primary/10 text-primary",
   },
 ];
 
@@ -61,10 +50,7 @@ export function FeaturesSection() {
   };
 
   return (
-    <section id="features" className="relative py-24 md:py-36 bg-black/90 overflow-hidden">
-      {/* Background gradient */}
-      
-
+    <section id="features" className="relative py-24 md:py-36 bg-black overflow-hidden">
       <div className="container relative z-10">
         <div className="mx-auto max-w-4xl text-center">
           <motion.div
@@ -72,17 +58,17 @@ export function FeaturesSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="inline-flex items-center rounded-full border border-purple-500/20 bg-purple-500/10 px-4 py-1.5 mb-6"
+            className="inline-flex items-center rounded-full bg-gradient-to-r from-primary/20 to-primary/10 px-4 py-1.5 mb-6"
           >
-            <Zap className="mr-2 h-4 w-4 text-purple-500" />
-            <span className="text-sm font-medium text-purple-500">Powerful Capabilities</span>
+            <Zap className="mr-2 h-4 w-4 text-primary" />
+            <span className="text-sm font-medium text-primary">Powerful Capabilities</span>
           </motion.div>
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             viewport={{ once: true }}
-            className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400"
+            className="bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl md:text-5xl"
           >
             Streamline Your Entire Meeting Workflow
           </motion.h2>
@@ -91,7 +77,7 @@ export function FeaturesSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             viewport={{ once: true }}
-            className="mt-4 text-lg text-gray-400"
+            className="mt-4 text-lg text-muted-foreground"
           >
             Everything you need to transform your meeting experience from scheduling to follow-up,
             powered by advanced AI technology.
@@ -103,31 +89,29 @@ export function FeaturesSection() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+          className="mt-16 grid gap-8 md:grid-cols-2 max-w-3xl mx-auto"
         >
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <motion.div
               key={feature.title}
               variants={item}
               className="group"
             >
-              <Card className="h-full border border-white/10 bg-black/40 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-lg hover:shadow-purple-500/10 hover:-translate-y-1">
+              <Card className="h-full border border-white/10 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1">
                 <CardHeader>
                   <div className={cn("w-14 h-14 rounded-lg flex items-center justify-center", feature.color)}>
                     <feature.icon className="h-7 w-7" />
                   </div>
-                  <CardTitle className="mt-4 text-xl text-white group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:text-transparent group-hover:from-white group-hover:to-gray-400">
+                  <CardTitle className="mt-4 text-xl text-foreground group-hover:text-primary">
                     {feature.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-base text-gray-400 group-hover:text-gray-300">
+                  <CardDescription className="text-base text-muted-foreground group-hover:text-foreground/80">
                     {feature.description}
                   </CardDescription>
                   
-                  <div className="mt-4 h-1 w-0 bg-gradient-to-r group-hover:w-full transition-all duration-300 rounded-full opacity-0 group-hover:opacity-100" style={{
-                    backgroundImage: `linear-gradient(to right, var(--${feature.gradient.split(' ')[0].substring(5)}), var(--${feature.gradient.split(' ')[1].substring(3)}))`
-                  }} />
+                  <div className="mt-4 h-1 w-0 bg-primary group-hover:w-full transition-all duration-300 rounded-full opacity-0 group-hover:opacity-100" />
                 </CardContent>
               </Card>
             </motion.div>
@@ -142,8 +126,8 @@ export function FeaturesSection() {
           className="mt-20 text-center"
         >
           <div className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3">
-            <span className="text-sm font-medium text-white">
-              <span className="text-purple-400">99.9% accuracy</span> in meeting transcription and summarization
+            <span className="text-sm font-medium text-foreground">
+              <span className="text-primary">99.9% accuracy</span> in meeting transcription and summarization
             </span>
           </div>
         </motion.div>
