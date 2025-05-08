@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Github, Calendar, Sparkles } from "lucide-react";
+import { ArrowRight, Calendar, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Spotlight } from "./ui/spotlight-new";
 
@@ -72,12 +72,12 @@ export function HeroSection() {
             transition={{ duration: 0.7, delay: 0.3 }}
           >
             Transform how you manage meetings with our AI-powered scheduler that
-            handles everything from calendar invites to follow-ups — all through
+            handles everything from calendar invites to follow-ups - all through
             natural language.
           </motion.p>
 
           <motion.div
-            className="mt-10 flex flex-col items-center justify-center gap-5 sm:flex-row"
+            className="mt-10 flex flex-col items-center justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5 }}
@@ -89,16 +89,6 @@ export function HeroSection() {
             >
               <Link href="/demo">
                 Try Live Demo <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="h-12 gap-2 rounded-full px-6 text-base"
-            >
-              <Github className="h-4 w-4" />
-              <Link href="https://github.com/Karush2807/MeetMate">
-                Star on Github
               </Link>
             </Button>
           </motion.div>
