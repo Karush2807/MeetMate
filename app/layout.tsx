@@ -10,6 +10,34 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "MeetMate",
   description: "Schedule meetings in plain English with AI-powered automation",
+  icons: {
+    icon: "/images/favicon.ico",
+    shortcut: "/images/favicon.ico",
+    apple: "/images/favicon.ico",
+  },
+  openGraph: {
+    title: "MeetMate",
+    description: "Schedule meetings in plain English with AI-powered automation",
+    url: "https://meet-mate-ashen.vercel.app/", 
+    siteName: "MeetMate",
+    images: [
+      {
+        url: "https://i.ibb.co/hRCkcP5J/image.png", 
+        width: 1200,
+        height: 630,
+        alt: "MeetMate Preview Image",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MeetMate",
+    description: "Schedule meetings in plain English with AI-powered automation",
+    images: ["https://i.ibb.co/hRCkcP5J/image.png"], 
+    site: "@janautsav", 
+  },
 };
 
 export default function RootLayout({
