@@ -12,6 +12,11 @@ export function HeroSection() {
   const [typedText, setTypedText] = useState("");
   const [showResponse, setShowResponse] = useState(false);
   const [showCursor, setShowCursor] = useState(true);
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    setIsVisible(true)
+  }, [])
 
   const fullText =
     "Schedule a meeting with Team UNIT13 at 5pm tomorrow about the product discussion.";
@@ -95,18 +100,18 @@ export function HeroSection() {
         </div>
 
         <motion.div
-          className="mx-auto mt-20 max-w-2xl overflow-hidden rounded-xl border bg-card/80 p-1 shadow-xl backdrop-blur-sm"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
+          className="relative mt-8 w-full max-w-3xl left-1/4 overflow-hidden rounded-lg border border-gray-800 bg-black/40 backdrop-blur-md"
+          initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <div className="flex items-center gap-2 border-b bg-muted/50 p-3">
+          <div className="flex items-center gap-1.5 border-b border-gray-800 bg-gray-900/80 px-4 py-2">
             <div className="flex gap-1.5">
               <div className="h-3 w-3 rounded-full bg-red-500"></div>
               <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
               <div className="h-3 w-3 rounded-full bg-green-500"></div>
             </div>
-            <div className=" flex items-center text-xs font-medium text-muted-foreground">
+            <div className=" flex pl-3 items-center text-xs font-medium text-muted-foreground">
               <Calendar className="mr-1.5 h-3.5 w-3.5" />
               AI Meeting Scheduler
             </div>
