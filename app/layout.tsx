@@ -1,14 +1,32 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Navbar } from "@/components/navbar";
 import { Analytics } from "@vercel/analytics/react";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  display: "swap",
+  style: ["normal", "italic"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "MeetMate",
+  title: "MeetMate — Schedule meetings in plain English",
   description: "Schedule meetings in plain English with AI-powered automation",
   icons: {
     icon: "/images/favicon.ico",
@@ -18,11 +36,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "MeetMate",
     description: "Schedule meetings in plain English with AI-powered automation",
-    url: "https://meet-mate-ashen.vercel.app/", 
+    url: "https://meet-mate-ashen.vercel.app/",
     siteName: "MeetMate",
     images: [
       {
-        url: "public/images/preview.png", 
+        url: "public/images/preview.png",
         width: 1200,
         height: 630,
         alt: "MeetMate Preview Image",
@@ -35,8 +53,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MeetMate",
     description: "Schedule meetings in plain English with AI-powered automation",
-    images: ["public/images/preview.png"], 
-    site: "@janautsav", 
+    images: ["public/images/preview.png"],
+    site: "@janautsav",
   },
 };
 
@@ -47,14 +65,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`}>
+      <body
+        className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+      >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
-          disableTransitionOnChange={false}
+          disableTransitionOnChange
         >
           <div className="relative flex min-h-screen flex-col">
+            <Navbar />
             <main className="flex-1">{children}</main>
           </div>
         </ThemeProvider>

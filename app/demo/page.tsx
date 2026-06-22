@@ -2,14 +2,18 @@ import { DemoSection } from "@/components/demo-section"
 
 export default function DemoPage() {
   return (
-    <div className="container">
-      <div className="fixed top-0 left-0 right-0 bg-green-500 text-black font-semibold p-1 text-center  shadow-md z-50 flex items-center justify-center">
-        <span>
-          <span className="font-bold">Beta Testing:</span> This application is in development and may contain bugs. 
-          If you encounter any errors, please contact our developers at <a href="mailto:dev@example.com" className="underline font-bold hover:text-green-100">unit13.2025@gmail.com</a>
-        </span>
-      </div>
-      <div className="pt-16">
+    <div className="border-b border-border bg-primary/10">
+      <p className="container py-2 text-center text-sm text-foreground">
+        <span className="font-semibold text-primary">Beta:</span> this app is in
+        active development and may contain bugs. Found one?{" "}
+        <a
+          href="mailto:unit13.2025@gmail.com"
+          className="font-medium underline underline-offset-2 hover:text-primary"
+        >
+          unit13.2025@gmail.com
+        </a>
+      </p>
+      <div className="bg-background">
         <DemoSection />
       </div>
     </div>
