@@ -11,7 +11,6 @@ const ContactList: React.FC<ContactListProps> = ({
   onToggleContact,
   searchQuery
 }) => {
-  // Filter contacts based on search query
   const filteredContacts = contacts.filter(contact => 
     contact.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     contact.email.toLowerCase().includes(searchQuery.toLowerCase())
